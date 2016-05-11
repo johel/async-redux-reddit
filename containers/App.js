@@ -8,6 +8,7 @@ export default class App extends Component {
   render() {
     return (
       <div>
+        <h2>Hey - {this.props.myState}</h2>
         <span>
           <h1>Subreddit</h1>
           <select>
