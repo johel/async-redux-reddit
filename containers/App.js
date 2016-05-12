@@ -1,20 +1,33 @@
 import React, { Component } from 'react'
+import {connect} from 'react-redux'
+import {selectReddit} from '../actions'
 
-export default class App extends Component {
+class App extends Component {
   constructor(props) {
     super(props)
+    this.onSelectChange = this.onSelectChange.bind(this);
+    this.renderOptions = this.renderOptions.bind(this);
+  }
+
+  onSelectChange(e){
+    let select = e.target;
+    let selectedReddit = select.options[select.selectedIndex].value;
+    this.props.dispatch(selectReddit(selectedReddit));
+  }
+
+  renderOptions(){
+    return this.props.reddits.map(reddit => {
+      return <option key={reddit} value = {reddit}>{reddit}</option>
+    })
   }
 
   render() {
     return (
       <div>
-        <h2>Hey - {this.props.myState}</h2>
         <span>
           <h1>Subreddit</h1>
-          <select>
-              <option value="1">
-                react
-              </option>
+          <select onChange={this.onSelectChange} value={this.props.selectedReddit}>
+              {this.renderOptions()}
           </select>
         </span>
         <p>
@@ -33,3 +46,13 @@ export default class App extends Component {
     )
   }
 }
+
+function mapStateToProps(state){
+  return {
+    selectedReddit:state.selectedReddit,
+    postsByReddit: state.postsByReddit,
+    reddits:["react", "frontend"]
+  }
+}
+
+export default connect(mapStateToProps)(App)
