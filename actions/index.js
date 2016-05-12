@@ -1,3 +1,4 @@
+import fetch from 'isomorphic-fetch'
 export const SELECT_REDDIT = 'SELECT_REDDIT';
 export const REQUEST_POSTS = 'REQUEST_POSTS';
 export const RECEIVE_POSTS = 'RECEIVE_POSTS';
@@ -20,10 +21,12 @@ export function requestReddit(reddit){
 
 export function receivePosts(reddit,jsonData){
 	var receivedAt = new Date();
+	var posts = jsonData.data.children.map(post=>post.data);
+	// console.log('posts', posts);
 	return {
 		type: RECEIVE_POSTS,
 		reddit,
-		posts: jsonData.data.children,
+		posts:posts,
 		receivedAt
 	}
 }
@@ -34,5 +37,21 @@ export function refreshReddit(reddit){
 		reddit
 	}
 }
+
+export function fetchPosts(reddit) {
+
+  // Invert control!
+  // Return a function that accepts `dispatch` so we can dispatch later.
+  // Thunk middleware knows how to turn thunk async actions into actions.
+
+  return function (dispatch) {
+  	dispatch(requestReddit(reddit));
+    return fetch(`https://www.reddit.com/r/${reddit}.json`)
+    	.then(response => response.json())
+    	.then(jsonData => dispatch(receivePosts(reddit,jsonData)) )
+  };
+}
+
+
 
 
