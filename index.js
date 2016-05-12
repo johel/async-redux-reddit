@@ -3,12 +3,12 @@ import React from 'react'
 import { render } from 'react-dom'
 import App from './containers/App'
 import {createStore} from 'redux'
-import {selectedReddit} from './reducers'
+import configureStore from './store/configureStore'
+
+const store = configureStore();
 
 
-const store = createStore(selectedReddit);
-console.log('hey');
-store.dispatch({type:"SELECT_REDDIT", reddit:"My custom reddit"})
+store.dispatch({type:"SELECT_REDDIT", reddit:"My  reddit"})
 
 
-render( <App myState={store.getState()} />,  document.getElementById('root') )
+render( <App myState={store.getState().selectedReddit} />,  document.getElementById('root') )
