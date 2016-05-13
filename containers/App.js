@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import {connect} from 'react-redux'
-import {selectReddit, fetchPosts} from '../actions'
+import {selectReddit,refreshReddit, fetchPosts} from '../actions'
 
 class App extends Component {
   constructor(props) {
@@ -8,6 +8,7 @@ class App extends Component {
     this.onSelectChange = this.onSelectChange.bind(this);
     this.renderOptions = this.renderOptions.bind(this);
     this.renderPosts = this.renderPosts.bind(this);
+    this.refreshClick = this.refreshClick.bind(this);
   }
 
   componentDidMount() {
@@ -29,6 +30,14 @@ class App extends Component {
     })
   }
 
+  refreshClick(){
+    const {dispatch, selectedReddit} = this.props;
+    dispatch(refreshReddit(selectedReddit));
+    // setTimeout(()=>console.log('current reddit',selectedReddit), 5000);
+    setTimeout(()=>dispatch(fetchPosts(selectedReddit)).catch(()=>alert('houve um erro')), 5000);
+    // dispatch(fetchPosts(selectedReddit)).catch(()=>alert('houve um erro'));
+  }
+
   renderPosts(){
     const {selectedReddit, postsByReddit} = this.props;
     if(!postsByReddit[selectedReddit]){
@@ -47,7 +56,7 @@ class App extends Component {
   }
 
   render() {
-    const {selectedReddit} = this.props;
+    const {selectedReddit, postsByReddit} = this.props;
     return (
       <div>
         <span>
@@ -58,9 +67,10 @@ class App extends Component {
         </span>
         <p>
           <span>
-            Ultima Atualizacao em: {" "}
+            Atualizado em:{" "} { postsByReddit[selectedReddit] && postsByReddit[selectedReddit].lastUpdated?
+               postsByReddit[selectedReddit].lastUpdated.toLocaleString() : '' }{" "}
           </span>
-          <a href="#">
+          <a onClick = {this.refreshClick} href="#">
             Atualizar
           </a>
         </p>
