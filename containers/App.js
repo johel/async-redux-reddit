@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import {connect} from 'react-redux'
-import {selectReddit,refreshReddit, fetchPosts} from '../actions'
+import {selectReddit,refreshReddit, fetchPostsIfNeeded} from '../actions'
 
 class App extends Component {
   constructor(props) {
@@ -13,7 +13,7 @@ class App extends Component {
 
   componentDidMount() {
     const { dispatch, selectedReddit } = this.props
-    dispatch(fetchPosts(selectedReddit))
+    dispatch(fetchPostsIfNeeded(selectedReddit))
   }
 
   onSelectChange(e){
@@ -21,7 +21,7 @@ class App extends Component {
     let select = e.target;
     let selectedReddit = select.options[select.selectedIndex].value;
     dispatch(selectReddit(selectedReddit));
-    dispatch(fetchPosts(selectedReddit)).catch(()=>alert('houve um erro'));
+    dispatch(fetchPostsIfNeeded(selectedReddit));
   }
 
   renderOptions(){
@@ -34,8 +34,8 @@ class App extends Component {
     const {dispatch, selectedReddit} = this.props;
     dispatch(refreshReddit(selectedReddit));
     // setTimeout(()=>console.log('current reddit',selectedReddit), 5000);
-    setTimeout(()=>dispatch(fetchPosts(selectedReddit)).catch(()=>alert('houve um erro')), 5000);
-    // dispatch(fetchPosts(selectedReddit)).catch(()=>alert('houve um erro'));
+    // setTimeout(()=>dispatch(fetchPostsIfNeeded(selectedReddit)).catch(()=>alert('houve um erro')), 5000);
+    dispatch(fetchPostsIfNeeded(selectedReddit)).catch(()=>alert('houve um erro'));
   }
 
   renderPosts(){

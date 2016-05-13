@@ -38,7 +38,7 @@ export function refreshReddit(reddit){
 	}
 }
 
-export function fetchPosts(reddit) {
+function fetchPosts(reddit) {
 
   // Invert control!
   // Return a function that accepts `dispatch` so we can dispatch later.
@@ -50,6 +50,28 @@ export function fetchPosts(reddit) {
     	.then(response => response.json())
     	.then(jsonData => dispatch(receivePosts(reddit,jsonData)) )
   };
+}
+
+function shouldFetchPosts(state,reddit){
+	let posts = state.postsByReddit[reddit];
+	
+	if(!posts){
+		return true;
+	}else if(posts.isLoading){
+		return false;
+	}
+
+	return posts.didRefresh;
+
+}
+
+export function fetchPostsIfNeeded(reddit){
+	return (dispatch, getState) => {
+		let currentState = getState();
+		if(shouldFetchPosts(currentState, reddit)){
+			dispatch(fetchPosts(reddit)).catch(()=>alert('houve um erro'));
+		}
+	}
 }
 
 
